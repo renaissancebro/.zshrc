@@ -29,7 +29,7 @@ eval "$(pyenv init -)"
 # ----- ⚙️ Aliases -----
 
 # Use neovim when typing vi
-alias vi="nvim"
+alias nvi="nvim"
 alias runpipe="cd ~/projects/pipe && source venv/bin/activate"
 
 
