@@ -51,8 +51,21 @@ alias codepick='function _c() { find . -type f -name "*.py" | fzf --preview "bat
 
 # Claude AI functionality 
 #
-# Claude alias tmux
-alias claude-repl="tmux new-session -d -s code_session \; split-window -h -p 30 'cd $PWD && claude' \; select-pane -L \; send-keys 'nvim .' C-m \; attach-session -t code_session"
+# 
+# ----- 🧠 Claude AI Integration -----
+claude-repl() {
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
+    tmux new-session -d -s code_session -c "$PWD" \;\
+      split-window -h -p 30 -c "$PWD" 'claude' \;\
+      split-window -v -p 25 -c "$PWD" 'lazygit' \;\
+      select-pane -t 0 \;\
+      send-keys 'nvim .' C-m \;\
+      attach-session -t code_session
+  else
+    echo "❌ Not in a Git repository. Please cd into a project first."
+  fi
+}
+
 # Close workflow
 alias close-claude='tmux kill-session -t code_session'
 

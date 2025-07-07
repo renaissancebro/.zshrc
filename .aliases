@@ -1,0 +1,17 @@
+# ~/.aliases
+
+alias gs='git status'
+
+alias git_contribute='function _gct() {
+  if [ -z "$1" ]; then
+    echo "❌ Usage: git_contribute \"commit message\""
+    return 1
+  fi
+  git add .
+  if git diff --cached --quiet; then
+    echo "⚠️  No changes to commit."
+    return 1
+  fi
+  git commit -m "$1"
+  git push origin main
+}; _gct'
