@@ -88,3 +88,14 @@ alias please='sudo $(fc -ln -1)'
 alias reload='source ~/.zshrc'
 alias venv='source venv/bin/activate'
 
+# Tmux improvements
+alias watch_claude_edit='watch -n 1 '\''cat ~/.claude/recently_edited.txt | xargs -I{} nvim +":e {}"'\'''
+
+# Claude file edit watcher session
+claude-watch() {
+  tmux new-session -d -s claude_watch -c "$PWD" \
+    "watch -n 1 'cat ~/.claude/recently_edited.txt | xargs -I{} nvim +\":e {}\"'" \;\
+    attach-session -t claude_watch
+}
+
+alias claude_watch='~/claude-watcher.sh'
