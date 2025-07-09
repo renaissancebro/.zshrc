@@ -57,7 +57,7 @@ claude-repl() {
   if git rev-parse --is-inside-work-tree &>/dev/null; then
     tmux new-session -d -s code_session -c "$PWD" \;\
       split-window -h -p 30 -c "$PWD" 'claude' \;\
-      split-window -v -p 25 -c "$PWD" 'lazygit' \;\
+      split-window -v -p 25 -c "$PWD" '~/scripts/git_status_loop.sh' \;\
       select-pane -t 0 \;\
       send-keys 'nvim .' C-m \;\
       attach-session -t code_session
@@ -91,11 +91,28 @@ alias venv='source venv/bin/activate'
 # Tmux improvements
 alias watch_claude_edit='watch -n 1 '\''cat ~/.claude/recently_edited.txt | xargs -I{} nvim +":e {}"'\'''
 
-# Claude file edit watcher session
+# Claude file edit watcher - shows file changes in real-time
 claude-watch() {
-  tmux new-session -d -s claude_watch -c "$PWD" \
-    "watch -n 1 'cat ~/.claude/recently_edited.txt | xargs -I{} nvim +\":e {}\"'" \;\
-    attach-session -t claude_watch
+  echo "🧠 Watching Claude file changes (Ctrl+C to stop)..."
+  local last_file=""
+  while true; do
+    if [ -s ~/.claude/recently_edited.txt ]; then
+      local current_file=$(cat ~/.claude/recently_edited.txt)
+      if [ "$current_file" != "$last_file" ]; then
+        echo "📂 $(date '+%H:%M:%S') - Claude edited: $current_file"
+        last_file="$current_file"
+      fi
+    fi
+    sleep 1
+  done
 }
 
-alias claude_watch='~/claude-watcher.sh'
+# Watch both file changes and command log
+claude-monitor() {
+  echo "🧠 Monitoring Claude activity (Ctrl+C to stop)..."
+  tail -f ~/.claude/bash-command-log.txt | while read line; do
+    echo "⚡ $(date '+%H:%M:%S') - $line"
+  done
+}
+alias cstatus='tail -f ~/.claude/bash-command-log.txt'
+alias gwatch='watch -n 2 "clear && git status -s && git diff --stat"'
