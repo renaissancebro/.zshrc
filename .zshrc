@@ -76,7 +76,10 @@ alias runflow="cd ~/dual_agent_refactor && tmux new-session \; \
   split-window -v 'sh scripts/fixer.sh' \; \
   select-pane -t 0 && clear"
 
+alias ga='git add .'
+alias gp='git push'
 ## git commit alias
+#
 gc() {
   if [ -z "$1" ]; then
     echo "❌ Commit message required"
@@ -136,3 +139,16 @@ claude-repl-summary() {
     echo "❌ Not in a Git repository. Please cd into a project first."
   fi
 }
+# See what chagnes
+alias cg='git --no-pager diff HEAD^ HEAD'
+
+# TUI Watcher - Live file monitoring
+tuiwatch() {
+  python3 ~/tui_watcher.py "$@"
+}
+
+# Monitoring Dashboard - Comprehensive monitoring setup
+alias monitor='~/scripts/monitoring_dashboard.sh'
+alias monitor-start='~/scripts/monitoring_dashboard.sh start'
+alias monitor-stop='~/scripts/monitoring_dashboard.sh kill'
+alias monitor-attach='~/scripts/monitoring_dashboard.sh attach'
