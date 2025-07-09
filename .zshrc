@@ -57,7 +57,7 @@ claude-repl() {
   if git rev-parse --is-inside-work-tree &>/dev/null; then
     tmux new-session -d -s code_session -c "$PWD" \;\
       split-window -h -p 30 -c "$PWD" 'claude' \;\
-      split-window -v -p 25 -c "$PWD" '~/scripts/git_status_loop.sh' \;\
+      split-window -v -p 25 -c "$PWD" '~/scripts/claude_activity_summary.sh' \;\
       select-pane -t 0 \;\
       send-keys 'nvim .' C-m \;\
       attach-session -t code_session
@@ -68,6 +68,7 @@ claude-repl() {
 
 # Close workflow
 alias close-claude='tmux kill-session -t code_session'
+alias repl='claude-repl'
 
 # Full on dual agent command
 alias runflow="cd ~/dual_agent_refactor && tmux new-session \; \
@@ -116,3 +117,22 @@ claude-monitor() {
 }
 alias cstatus='tail -f ~/.claude/bash-command-log.txt'
 alias gwatch='watch -n 2 "clear && git status -s && git diff --stat"'
+
+# New structured monitoring aliases
+alias claude-activity='~/scripts/claude_activity_summary.sh'
+alias claude-summary='~/scripts/claude_activity_summary.sh summary'
+alias claude-repl-quiet='claude-repl-summary'
+
+# Alternative claude-repl with less overwhelming git view
+claude-repl-summary() {
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
+    tmux new-session -d -s code_session -c "$PWD" \;\
+      split-window -h -p 30 -c "$PWD" 'claude' \;\
+      split-window -v -p 25 -c "$PWD" '~/scripts/git_status_summary.sh' \;\
+      select-pane -t 0 \;\
+      send-keys 'nvim .' C-m \;\
+      attach-session -t code_session
+  else
+    echo "❌ Not in a Git repository. Please cd into a project first."
+  fi
+}
