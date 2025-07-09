@@ -77,7 +77,8 @@ alias runflow="cd ~/dual_agent_refactor && tmux new-session \; \
   select-pane -t 0 && clear"
 
 alias ga='git add .'
-alias gp='git push'
+alias gp='git push origin main'
+alias pushy='git push'
 ## git commit alias
 #
 gc() {
