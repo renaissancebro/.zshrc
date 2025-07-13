@@ -180,3 +180,26 @@ alias observer-status='~/dotfiles/scripts/claude_observer_enhanced.sh status'
 alias observer-watch='~/dotfiles/scripts/claude_observer_enhanced.sh watch'
 alias observer-anomalies='~/dotfiles/scripts/claude_observer_enhanced.sh anomalies'
 alias firstp='ga && gc initial commit && gp'
+
+
+# 🚀 Claude Autonomous Engine
+alias claude-auto='cd /Users/joshuafreeman/custom-claude-hooks && uv run .claude/instruction_dispatch.py --auto'
+alias claude-once='cd /Users/joshuafreeman/custom-claude-hooks && uv run .claude/instruction_dispatch.py --once'
+alias claude-status='cat /Users/joshuafreeman/custom-claude-hooks/logs/status.json | jq'
+alias claude-setup='cp -r /Users/joshuafreeman/custom-claude-hooks/.claude/hooks ~/.claude/ && cp /Users/joshuafreeman/custom-claude-hooks/.claude/settings.json ~/.claude/'
+
+# 🗃 Multi-project loader
+alias claude-work='uv run /Users/joshuafreeman/custom-claude-hooks/.claude/instruction_dispatch.py --work-dir'
+
+# 📁 Task file helpers
+alias task-list='ls -la /Users/joshuafreeman/custom-claude-hooks/.claude/tasks/'
+alias task-logs='tail -f /Users/joshuafreeman/custom-claude-hooks/logs/task_dispatcher.json'
+
+# ⚡ Quick manual task creation
+alias quick-task='function _qt() { echo "{\"id\":\"$1\",\"title\":\"$2\",\"description\":\"$3\",\"type\":\"general\"}" > "/Users/joshuafreeman/custom-claude-hooks/.claude/tasks/$1.json"; }; _qt'
+
+# 🌍 Remote scheduling system
+alias remote-task='function _rt() { echo "{\"id\":\"remote_$(date +%s)\",\"title\":\"$1\",\"description\":\"$2\",\"type\":\"general\",\"priority\":\"high\"}" > ~/claude_control/tasks/remote_$(date +%s).json; }; _rt'
+
+# 🧠 Background daemon
+alias claude-daemon='cd ~/claude_control && export CLAUDE_AUTO_MODE=true && uv run instruction_dispatch.py --auto &'
