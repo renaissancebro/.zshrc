@@ -51,13 +51,12 @@ alias codepick='function _c() { find . -type f -name "*.py" | fzf --preview "bat
 
 # Claude AI functionality 
 #
-# 
+alias cld='claude' 
 # ----- 🧠 Claude AI Integration -----
 claude-repl() {
   if git rev-parse --is-inside-work-tree &>/dev/null; then
     tmux new-session -d -s code_session -c "$PWD" \;\
       split-window -h -p 30 -c "$PWD" 'claude' \;\
-      split-window -v -p 25 -c "$PWD" '~/scripts/claude_activity_summary.sh' \;\
       select-pane -t 0 \;\
       send-keys 'nvim .' C-m \;\
       attach-session -t code_session
@@ -143,13 +142,41 @@ claude-repl-summary() {
 # See what chagnes
 alias cg='git --no-pager diff HEAD^ HEAD'
 
+# Claude monitoring function with claude-watch/claude-activities on left and claude code on right
+claude-monitor-repl() {
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
+    tmux new-session -d -s claude_monitor_session -c "$PWD" \;\
+      split-window -h -p 50 -c "$PWD" 'claude' \;\
+      split-window -v -p 50 -c "$PWD" 'claude-watch' \;\
+      select-pane -t 0 \;\
+      send-keys 'claude-activity' C-m \;\
+      attach-session -t claude_monitor_session
+  else
+    echo "❌ Not in a Git repository. Please cd into a project first."
+  fi
+}
+
+# Close claude monitor workflow
+alias close-claude-monitor='tmux kill-session -t claude_monitor_session'
+
 # TUI Watcher - Live file monitoring
 tuiwatch() {
   python3 ~/tui_watcher.py "$@"
 }
+
+alias py='python'
 
 # Monitoring Dashboard - Comprehensive monitoring setup
 alias monitor='~/scripts/monitoring_dashboard.sh'
 alias monitor-start='~/scripts/monitoring_dashboard.sh start'
 alias monitor-stop='~/scripts/monitoring_dashboard.sh kill'
 alias monitor-attach='~/scripts/monitoring_dashboard.sh attach'
+
+# Claude Observer aliases
+alias claude-observer='~/dotfiles/scripts/claude_observer_enhanced.sh'
+alias observer-start='~/dotfiles/scripts/claude_observer_enhanced.sh start'
+alias observer-stop='~/dotfiles/scripts/claude_observer_enhanced.sh stop'
+alias observer-status='~/dotfiles/scripts/claude_observer_enhanced.sh status'
+alias observer-watch='~/dotfiles/scripts/claude_observer_enhanced.sh watch'
+alias observer-anomalies='~/dotfiles/scripts/claude_observer_enhanced.sh anomalies'
+alias firstp='ga && gc initial commit && gp'
