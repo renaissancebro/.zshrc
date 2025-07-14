@@ -37,7 +37,7 @@ export PATH="$HOME/.local/bin:$PATH"
 export ALACRITTY_CONFIG="$HOME/.config/alacritty/alacritty.yml"
 
 # Safe guard for rm -rf
-alias rm='trash'
+# alias rm='trash'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 alias refactor="/Users/joshuafreeman/Desktop/agent_projects/autogen/refactor_agent/refactor_alias.sh"
@@ -91,7 +91,7 @@ gc() {
 alias please='sudo $(fc -ln -1)'
 alias reload='source ~/.zshrc'
 alias venv='source venv/bin/activate'
-
+alias setenv='python3 -m venv venv'
 # Tmux improvements
 alias watch_claude_edit='watch -n 1 '\''cat ~/.claude/recently_edited.txt | xargs -I{} nvim +":e {}"'\'''
 
@@ -203,3 +203,6 @@ alias remote-task='function _rt() { echo "{\"id\":\"remote_$(date +%s)\",\"title
 
 # 🧠 Background daemon
 alias claude-daemon='cd ~/claude_control && export CLAUDE_AUTO_MODE=true && uv run instruction_dispatch.py --auto &'
+
+# Path shortcut
+alias sandbox='cd ~/Desktop/agent_projects/'
