@@ -1,6 +1,36 @@
 # 🛠️ Joshua's Dotfiles
 
-A comprehensive zsh configuration with AI-powered development workflow, monitoring tools, and productivity enhancements.
+A comprehensive dotfiles configuration with Neovim setup, zsh configuration, AI-powered development workflow, monitoring tools, and productivity enhancements.
+
+## 🚀 Quick Setup for New Machine
+
+Clone this repository directly into your `~/.config` directory:
+
+```bash
+# Remove existing config directory (backup first if needed)
+rm -rf ~/.config
+
+# Clone dotfiles as .config
+git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/.config
+```
+
+After cloning:
+1. Install Neovim (>= 0.9.0)
+2. Open nvim and let lazy.nvim install all plugins automatically
+3. Restart nvim after initial plugin installation
+
+## 📁 What's Included
+
+### 🎨 Neovim Configuration (`nvim/`)
+- Complete Neovim configuration with plugins and custom settings
+- Kickstart-based configuration with custom enhancements
+- Python, JavaScript, TypeScript, HTML, CSS syntax highlighting
+- Git integration, file explorer, and productivity plugins
+- Custom color schemes and visual enhancements
+- Lazy.nvim plugin manager with automatic setup
+
+### 🐚 Zsh Configuration
+A comprehensive zsh setup with AI-powered development workflow, monitoring tools, and productivity enhancements.
 
 ## 🚀 Features
 
