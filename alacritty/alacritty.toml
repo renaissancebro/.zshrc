@@ -1,0 +1,69 @@
+[window]
+padding = { x = 6, y = 6 }
+decorations = "full"
+startup_mode = "Windowed"
+
+[font]
+normal = { family = "Hack Nerd Font", style = "Regular" }
+size = 16
+
+[cursor]
+style = { shape = "Beam", blinking = "Always" }
+
+[terminal]
+
+[terminal.shell]
+program = "/bin/zsh"
+
+
+[colors.primary]
+background = "#1C1E26"
+foreground = "#E0E0E0"
+
+[colors.cursor]
+text = "#1C1E26"
+cursor = "#7dcfff"
+
+[colors.vi_mode_cursor]
+text = "#1C1E26"
+cursor = "#7dcfff"
+
+[colors.search.matches]
+foreground = "#1C1E26"
+background = "#FFCC66"
+
+[colors.search.focused_match]
+foreground = "#1C1E26"
+background = "#F28779"
+
+[colors.hints.start]
+foreground = "#1C1E26"
+background = "#E95678"
+
+[colors.hints.end]
+foreground = "#E95678"
+background = "#1C1E26"
+
+[colors.selection]
+text = "#1C1E26"
+background = "#E0E0E0"
+
+[colors.normal]
+black   = "#16161C"
+red     = "#E95678"
+green   = "#29D398"
+yellow  = "#FAB795"
+blue    = "#26BBD9"
+magenta = "#EE64AC"
+cyan    = "#59E1E3"
+white   = "#E0E0E0"
+
+[colors.bright]
+black   = "#1C1E26"
+red     = "#EC6A88"
+green   = "#3FDAA4"
+yellow  = "#FBC3A7"
+blue    = "#3FC4DE"
+magenta = "#F075B7"
+cyan    = "#6BE4E6"
+white   = "#FFFFFF"
