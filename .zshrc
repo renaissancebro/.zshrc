@@ -13,17 +13,18 @@ eval "$(pyenv init -)"
 
 # Optional: Conda (commented out — only enable if needed)
 # >>> conda initialize >>>
-# __conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-# if [ $? -eq 0 ]; then
-#     eval "$__conda_setup"
-# else
-#     if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-#         . "/opt/anaconda3/etc/profile.d/conda.sh"
-#     else
-#         export PATH="/opt/anaconda3/bin:$PATH"
-#     fi
-# fi
-# unset __conda_setup
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
 # <<< conda initialize <<<
 
 # ----- ⚙️ Aliases -----
@@ -40,7 +41,7 @@ export ALACRITTY_CONFIG="$HOME/.config/alacritty/alacritty.yml"
 # alias rm='trash'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-alias refactor="/Users/joshuafreeman/Desktop/agent_projects/autogen/refactor_agent/refactor_alias.sh"
+# alias refactor="/Users/joshuafreeman/Desktop/agent_projects/autogen/refactor_agent/refactor_alias.sh"
 
 # Refactor with gemini CLI AI flow
 alias refactorai='function _r() { cat "$1" | gemini -p "Extract reusable utilities"; }; _r'
@@ -48,6 +49,35 @@ alias codepick='function _c() { find . -type f -name "*.py" | fzf --preview "bat
 
 # Load custom CLI aliases
 [ -f ~/.aliases ] && source ~/.aliases
+
+# Auto-activate venv when in project directories
+auto_activate_venv() {
+  if [[ -n "$VIRTUAL_ENV" ]]; then
+    return
+  fi
+  
+  local venv_paths=(
+    "$PWD/venv/bin/activate"
+    "$PWD/.venv/bin/activate"
+    "$PWD/env/bin/activate"
+  )
+  
+  for venv_path in "${venv_paths[@]}"; do
+    if [[ -f "$venv_path" ]]; then
+      source "$venv_path"
+      echo "🐍 Activated virtual environment: $(basename $(dirname $(dirname $venv_path)))"
+      return
+    fi
+  done
+}
+
+# Hook into cd to auto-activate venv
+chpwd() {
+  auto_activate_venv
+}
+
+# Activate on shell start if in project directory
+auto_activate_venv
 
 # Claude AI functionality 
 #
@@ -110,6 +140,11 @@ claude-watch() {
     sleep 1
   done
 }
+
+
+# Installer aliases
+alias uvp='uv pip'
+
 
 # Watch both file changes and command log
 claude-monitor() {
@@ -206,3 +241,38 @@ alias claude-daemon='cd ~/claude_control && export CLAUDE_AUTO_MODE=true && uv r
 
 # Path shortcut
 alias sandbox='cd ~/Desktop/agent_projects/'
+export PATH="/usr/local/bin:$PATH"
+alias gs='git status'
+alias gl='git log --oneline -5'
+alias gd='git diff'
+alias where='pwd && git status'
+export PS1="%n@%m %1~ %# "
+eval "$(direnv hook zsh)"
+
+# Remote
+alias rig='script-divergent@100.79.86.39'
+export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
+export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
+
+# Jupyter notebook
+alias jn='jupyter notebook'
+
+# Go to classes directory
+alias classes='cd ~/Desktop/classes/'
+alias ve='setenv && venv'
+
+# Move files from Downloads easily
+mvdl() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: mvdl <filename> [destination]"
+        echo "Recent downloads:"
+        ls -t ~/Downloads | head -10
+        return 1
+    fi
+
+    local file="$1"
+    local dest="${2:-.}"  # Default to current directory if no destination given
+
+    mv ~/Downloads/"$file" "$dest" && echo "✓ Moved $file to $dest"
+}
+
