@@ -1,0 +1,27 @@
+# Lazy.nvim plugin directory
+lazy-lock.json
+
+# Compiled bytecode
+*.luac
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*~
+tags
+test.sh
+.luarc.json
+nvim
+
+spell/

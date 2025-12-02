@@ -172,19 +172,6 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- [[ C/C++ specific indentation settings ]]
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = {"c", "cpp", "cc", "cxx", "h", "hpp"},
-  callback = function()
-    vim.bo.tabstop = 2          -- Tab width when reading files  
-    vim.bo.softtabstop = 2      -- Tab width when editing
-    vim.bo.shiftwidth = 2       -- Width for auto-indentation
-    vim.bo.expandtab = true     -- Use spaces instead of tabs
-    vim.bo.cindent = true       -- Enable C-style indentation
-    vim.bo.cinoptions = "N-s"   -- No indent for namespace contents
-  end,
-})
-
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -201,7 +188,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 --
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -253,12 +240,6 @@ function get_run_cmd(file)
   if ext == 'py' then
     local python_cmd = get_python_cmd()
     return python_cmd .. ' ' .. file
-  elseif ext == 'c' then
-    local basename = vim.fn.fnamemodify(file, ':r')
-    return 'gcc -o ' .. basename .. ' ' .. file .. ' && ./' .. basename
-  elseif ext == 'cpp' or ext == 'cc' or ext == 'cxx' then
-    local basename = vim.fn.fnamemodify(file, ':r')
-    return 'g++ -o ' .. basename .. ' ' .. file .. ' && ./' .. basename
   elseif ext == 'sh' then
     return 'bash ' .. file
   elseif ext == 'js' then
@@ -391,27 +372,6 @@ vim.keymap.set('n', '<leader>py', function()
   print("🐍 Python: " .. python_cmd .. venv_info)
 end, { desc = '[P]ython interpreter info', noremap = true, silent = true })
 
--- Theme switching keybindings - VS Code style easy switching
-vim.keymap.set('n', '<leader>tt', function()
-  vim.ui.select(
-    { 'tokyonight-night', 'tokyonight-storm', 'tokyonight-moon', 'catppuccin-mocha', 'kanagawa', 'rose-pine', 'gruvbox' },
-    { prompt = '🎨 Select theme:' },
-    function(choice)
-      if choice then
-        vim.cmd.colorscheme(choice)
-        print('🎨 Theme: ' .. choice)
-      end
-    end
-  )
-end, { desc = '[T]heme [T]oggle', noremap = true, silent = true })
-
--- Quick theme shortcuts
-vim.keymap.set('n', '<leader>t1', function() vim.cmd.colorscheme('tokyonight-night') end, { desc = 'Tokyo Night', noremap = true })
-vim.keymap.set('n', '<leader>t2', function() vim.cmd.colorscheme('catppuccin-mocha') end, { desc = 'Catppuccin', noremap = true })
-vim.keymap.set('n', '<leader>t3', function() vim.cmd.colorscheme('kanagawa') end, { desc = 'Kanagawa', noremap = true })
-vim.keymap.set('n', '<leader>t4', function() vim.cmd.colorscheme('rose-pine') end, { desc = 'Rose Pine', noremap = true })
-vim.keymap.set('n', '<leader>t5', function() vim.cmd.colorscheme('gruvbox') end, { desc = 'Gruvbox', noremap = true })
-
 -- Python type checking toggle
 vim.keymap.set('n', '<leader>tc', function()
   local clients = vim.lsp.get_clients({ name = 'pyright' })
@@ -540,7 +500,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- Terminal & tail logs
 -- Make sure this comes *after* require('which-key').setup()
 -- Seamless insert mode escaping
-vim.keymap.set('i', 'jk', '<Esc>', { noremap = true })
+vim.keymap.set('i', 'kk', '<Esc>', { noremap = true })
 
 -- Block indent/unindent in visual mode
 vim.keymap.set('v', '<Tab>', '>gv', { noremap = true })
@@ -855,32 +815,15 @@ require('lazy').setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
-        defaults = {
-          file_ignore_patterns = {
-            "node_modules/",
-            ".git/",
-            "dist/",
-            "build/",
-            "__pycache__/",
-            "%.pyc",
-            ".DS_Store",
-            "%.jpg", "%.jpeg", "%.png", "%.pdf"
-          },
-          -- Disable treesitter highlighting in previewer to fix query errors
-          preview = {
-            treesitter = false,
-          },
-          layout_config = {
-            horizontal = { preview_width = 0.6 },
-          },
-        },
-        pickers = {
-          find_files = {
-            hidden = false,
-            follow = true,
-            previewer = false, -- Disable preview for faster loading and no errors
-          },
-        },
+        -- You can put your default mappings / updates / etc. in here
+        --  All the info you're looking for is in `:help telescope.setup()`
+        --
+        -- defaults = {
+        --   mappings = {
+        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+        --   },
+        -- },
+        -- pickers = {}
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -1155,7 +1098,7 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
+        -- clangd = {},
         -- gopls = {},
         pyright = {
           settings = {
@@ -1229,14 +1172,11 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'prettier', -- Used to format HTML, CSS, JS, TS, JSON, YAML, Markdown
-        'prettierd', -- Faster prettier daemon
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
         ensure_installed = {
-          'clangd',
           'html',
           'cssls',
           'ts_ls',
@@ -1280,16 +1220,8 @@ require('lazy').setup({
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
-        local web_filetypes = { html = true, css = true, scss = true, javascript = true, typescript = true, javascriptreact = true, typescriptreact = true, tsx = true }
-        
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
-        elseif web_filetypes[vim.bo[bufnr].filetype] then
-          -- Use specific formatters for web files, no LSP fallback
-          return {
-            timeout_ms = 500,
-            lsp_format = 'never',
-          }
         else
           return {
             timeout_ms = 500,
@@ -1299,54 +1231,11 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Web development formatters
-        html = { 'prettier' },
-        css = { 'prettier' },
-        scss = { 'prettier' },
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        tsx = { 'prettierd', 'prettier', stop_after_first = true },
-        json = { 'prettier' },
-        yaml = { 'prettier' },
-        markdown = { 'prettier' },
-        -- Python formatters (uncomment if you want auto-formatting)
+        -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
-      },
-      formatters = {
-        prettier = {
-          prepend_args = function(_, ctx)
-            -- Custom prettier configuration for different file types
-            local args = {}
-            
-            if ctx.filetype == 'html' then
-              -- HTML specific settings: 2 spaces, preserve attributes on same line
-              table.insert(args, '--tab-width=2')
-              table.insert(args, '--use-tabs=false')
-              table.insert(args, '--html-whitespace-sensitivity=ignore')
-              table.insert(args, '--single-attribute-per-line=false')
-            elseif ctx.filetype == 'css' or ctx.filetype == 'scss' then
-              -- CSS specific settings: 2 spaces
-              table.insert(args, '--tab-width=2')
-              table.insert(args, '--use-tabs=false')
-            elseif vim.tbl_contains({'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'tsx'}, ctx.filetype) then
-              -- JavaScript/TypeScript specific settings: 2 spaces, semicolons, single quotes
-              table.insert(args, '--tab-width=2')
-              table.insert(args, '--use-tabs=false')
-              table.insert(args, '--semi=true')
-              table.insert(args, '--single-quote=true')
-              table.insert(args, '--jsx-single-quote=true')
-              table.insert(args, '--trailing-comma=es5')
-            else
-              -- Default settings: 2 spaces
-              table.insert(args, '--tab-width=2')
-              table.insert(args, '--use-tabs=false')
-            end
-            
-            return args
-          end,
-        },
+        --
+        -- You can use 'stop_after_first' to run the first available formatter from the list
+        -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
     },
   },
@@ -1383,16 +1272,6 @@ require('lazy').setup({
         opts = {},
       },
       'folke/lazydev.nvim',
-      -- AI completion with Codeium (disabled)
-      -- {
-      --   'Exafunction/codeium.nvim',
-      --   dependencies = {
-      --     'nvim-lua/plenary.nvim',
-      --   },
-      --   config = function()
-      --     require('codeium').setup({})
-      --   end,
-      -- },
     },
     --- @module 'blink.cmp'
     --- @type blink.cmp.Config
@@ -1426,15 +1305,6 @@ require('lazy').setup({
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
-          -- codeium = {
-          --   name = 'codeium',
-          --   module = 'blink.compat.source',
-          --   score_offset = 100,
-          --   async = true,
-          --   opts = {
-          --     source = require('codeium.source'),
-          --   },
-          -- },
         },
       },
 
@@ -1684,9 +1554,6 @@ require('lazy').setup({
 
 -- Load Python auto-detection
 require('custom.python-auto')
-
--- Set default colorscheme
-vim.cmd.colorscheme('tokyonight-night')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- Auto-reload files when they change on disk
